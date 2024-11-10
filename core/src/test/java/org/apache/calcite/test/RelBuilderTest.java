@@ -2750,6 +2750,7 @@ public class RelBuilderTest {
           .filter(builder.equals(builder.field(0), v.get()))
           .scan("DEPT")
           .join(JoinRelType.INNER, builder.literal(true),
+              null,
               ImmutableSet.of(v.get().id));
       fail("expected error");
     } catch (IllegalArgumentException e) {
@@ -2770,6 +2771,7 @@ public class RelBuilderTest {
         .join(JoinRelType.LEFT,
             builder.equals(builder.field(2, 0, "SAL"),
                 builder.literal(1000)),
+            null,
             ImmutableSet.of(v.get().id))
         .build();
     // Note that the join filter gets pushed to the right-hand input of
@@ -2792,6 +2794,7 @@ public class RelBuilderTest {
         .join(JoinRelType.LEFT,
             builder.equals(builder.field(2, 0, "SAL"),
                 builder.literal(1000)),
+            null,
             ImmutableSet.of(v.get().id))
         .build();
     // Note that the join is emitted since the query is not actually a correlated.
@@ -4636,6 +4639,7 @@ public class RelBuilderTest {
         .join(JoinRelType.LEFT,
             builder.equals(builder.field(2, 0, "SAL"),
                 builder.literal(1000)),
+            null,
             ImmutableSet.of(v.get().id))
         .build();
 
@@ -5024,7 +5028,8 @@ public class RelBuilderTest {
         .join(type,
             builder.equals(
                 builder.field(2, 0, "DEPTNO"),
-                builder.field(2, 1, "DEPTNO")), ImmutableSet.of(v.get().id))
+                builder.field(2, 1, "DEPTNO")),
+            null, ImmutableSet.of(v.get().id))
         .build();
   }
 
@@ -5046,7 +5051,9 @@ public class RelBuilderTest {
         .join(type,
             builder.equals(
                 builder.field(2, 0, "DEPTNO"),
-                builder.field(2, 1, "DEPTNO")), ImmutableSet.of(v.get().id))
+                builder.field(2, 1, "DEPTNO")),
+                null,
+            ImmutableSet.of(v.get().id))
         .build();
   }
 

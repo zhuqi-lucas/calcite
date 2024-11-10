@@ -126,7 +126,7 @@ class PigRelOpInnerVisitor extends PigRelOpVisitor {
     // The do correlate join
     for (int i = 0; i < corIds.size(); i++) {
       builder.push(rightRels.get(i));
-      builder.join(JoinRelType.INNER, builder.literal(true), ImmutableSet.of(corIds.get(i)));
+      builder.join(JoinRelType.INNER, builder.literal(true), null, ImmutableSet.of(corIds.get(i)));
     }
   }
 

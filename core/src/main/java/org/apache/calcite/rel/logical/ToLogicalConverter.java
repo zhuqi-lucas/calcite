@@ -124,7 +124,7 @@ public class ToLogicalConverter extends RelShuttleImpl {
       final Correlate corr = (Correlate) relNode;
       return relBuilder.push(visit(corr.getLeft()))
           .push(visit(corr.getRight()))
-          .join(corr.getJoinType(), relBuilder.literal(true),
+          .join(corr.getJoinType(), relBuilder.literal(true), null,
               corr.getVariablesSet())
           .build();
     }

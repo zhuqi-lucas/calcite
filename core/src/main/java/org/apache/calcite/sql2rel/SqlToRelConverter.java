@@ -3006,6 +3006,7 @@ public class SqlToRelConverter {
       RelNode leftRel,
       RelNode rightRel,
       RexNode joinCond,
+      RexNode partitionBy,
       JoinRelType joinType) {
     final CorrelationUse p = getCorrelationUse(bb, rightRel);
     if (p != null) {
@@ -3037,7 +3038,7 @@ public class SqlToRelConverter {
     final RelNode node =
         relBuilder.push(leftRel)
             .push(rightRel)
-            .join(joinType, joinCond)
+            .join(joinType, joinCond, partitionBy)
             .build();
 
     // If join conditions are pushed down, update the leaves.
@@ -3278,7 +3279,7 @@ public class SqlToRelConverter {
 
     final JoinConditionType conditionType = join.getConditionType();
     final RexNode condition;
-    final RexNode partitionByExpr;
+    RexNode partitionByExpr = null;
     RelNode rightRel;
     if (join.isNatural()) {
       condition =
@@ -3335,7 +3336,7 @@ public class SqlToRelConverter {
               convertJoinType(joinType));
     } else {
       joinRel =
-          createJoin(fromBlackboard, leftRel, rightRel, condition,
+          createJoin(fromBlackboard, leftRel, rightRel, condition, partitionByExpr,
               convertJoinType(joinType));
     }
     relBuilder.push(joinRel);
@@ -5284,6 +5285,7 @@ public class SqlToRelConverter {
               root(),
               rel,
               joinCond,
+              null,
               joinType);
 
       setRoot(join, false);

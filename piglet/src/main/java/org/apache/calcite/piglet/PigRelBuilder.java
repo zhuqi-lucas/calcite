@@ -476,7 +476,7 @@ public class PigRelBuilder extends RelBuilder {
     multiSetFlatten();
 
     // And rejoin the result -> output: original columns + new flattened columns
-    join(JoinRelType.INNER, literal(true), ImmutableSet.of(correlId));
+    join(JoinRelType.INNER, literal(true), null, ImmutableSet.of(correlId));
 
     // Finally project out only required columns. The original multiset columns are replaced
     // by the new corresponding flattened columns

@@ -225,6 +225,7 @@ public abstract class Join extends BiRel implements Hintable {
   @Override public RelWriter explainTerms(RelWriter pw) {
     return super.explainTerms(pw)
         .item("condition", condition)
+        .itemIf("partitionBy", partitionBy, partitionBy != null)
         .item("joinType", joinType.lowerName)
         .itemIf("variablesSet", variablesSet, !variablesSet.isEmpty())
         .itemIf(

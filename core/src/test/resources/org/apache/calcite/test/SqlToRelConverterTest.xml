@@ -6135,7 +6135,7 @@ ORDER BY 2]]>
       <![CDATA[
 LogicalSort(sort0=[$1], dir0=[ASC])
   LogicalProject(ENAME=[$1], EMPNO=[$0], NAME=[$10], DEPTNO=[$9])
-    LogicalJoin(condition=[=($1, $11)], joinType=[left])
+    LogicalJoin(condition=[=($1, $11)], partitionBy=[$9], joinType=[left])
       LogicalTableScan(table=[[CATALOG, SALES, EMP]])
       LogicalProject(DEPTNO=[$0], NAME=[$1], NAME0=[CAST($1):VARCHAR(20) NOT NULL])
         LogicalTableScan(table=[[CATALOG, SALES, DEPT]])

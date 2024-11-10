@@ -3161,17 +3161,22 @@ public class RelBuilder {
    * conditions. */
   public RelBuilder join(JoinRelType joinType,
       Iterable<? extends RexNode> conditions) {
-    return join(joinType, and(conditions),
+    return join(joinType, and(conditions),null,
         ImmutableSet.of());
   }
 
   /** Creates a {@link Join} with one condition. */
   public RelBuilder join(JoinRelType joinType, RexNode condition) {
-    return join(joinType, condition, ImmutableSet.of());
+    return join(joinType, condition, null,ImmutableSet.of());
+  }
+
+  /** Creates a {@link Join} with one condition and partitonBy. */
+  public RelBuilder join(JoinRelType joinType, RexNode condition, RexNode partitonBy) {
+    return join(joinType, condition, partitonBy,ImmutableSet.of());
   }
 
   /** Creates a {@link Join} with correlating variables. */
-  public RelBuilder join(JoinRelType joinType, RexNode condition,
+  public RelBuilder join(JoinRelType joinType, RexNode condition, RexNode partitionBy,
       Set<CorrelationId> variablesSet) {
     Frame right = stack.pop();
     final Frame left = stack.pop();
@@ -3214,7 +3219,7 @@ public class RelBuilder {
     } else {
       RelNode join0 =
           struct.joinFactory.createJoin(left.rel, right.rel,
-              ImmutableList.of(), condition, null, variablesSet, joinType, false);
+              ImmutableList.of(), condition, partitionBy, variablesSet, joinType, false);
 
       if (join0 instanceof Join && config.pushJoinCondition()) {
         join = RelOptUtil.pushDownJoinConditions((Join) join0, this);

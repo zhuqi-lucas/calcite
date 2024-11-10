@@ -291,7 +291,7 @@ public abstract class MutableRels {
       final MutableJoin join = (MutableJoin) node;
       relBuilder.push(fromMutable(join.getLeft(), relBuilder));
       relBuilder.push(fromMutable(join.getRight(), relBuilder));
-      relBuilder.join(join.joinType, join.condition, join.variablesSet);
+      relBuilder.join(join.joinType, join.condition, null, join.variablesSet);
       return relBuilder.build();
     case CORRELATE:
       final MutableCorrelate correlate = (MutableCorrelate) node;

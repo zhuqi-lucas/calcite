@@ -335,6 +335,7 @@ class ToLogicalConverterTest {
         .join(JoinRelType.LEFT,
             builder.equals(builder.field(2, 0, "SAL"),
                 builder.literal(1000)),
+            null,
             ImmutableSet.of(v.get().id))
         .build();
     String expectedPhysical = ""

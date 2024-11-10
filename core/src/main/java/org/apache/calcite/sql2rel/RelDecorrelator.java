@@ -1309,6 +1309,7 @@ public class RelDecorrelator implements ReflectiveVisitor {
         .push(rightFrame.r)
         .join(rel.getJoinType(),
             decorrelateExpr(castNonNull(currentRel), map, cm, rel.getCondition()),
+            null,
             ImmutableSet.of())
         .build();
 

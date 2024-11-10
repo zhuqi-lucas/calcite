@@ -663,6 +663,7 @@ class SqlHintsConverterTest {
               join.getRight(),
               join.getHints(),
               join.getCondition(),
+              join.getPartitionBy(),
               join.getVariablesSet(),
               join.getJoinType()));
     }

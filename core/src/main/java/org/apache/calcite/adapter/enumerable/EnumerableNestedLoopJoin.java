@@ -52,7 +52,7 @@ public class EnumerableNestedLoopJoin extends Join implements EnumerableRel {
   protected EnumerableNestedLoopJoin(RelOptCluster cluster, RelTraitSet traits,
       RelNode left, RelNode right, RexNode condition,
       Set<CorrelationId> variablesSet, JoinRelType joinType) {
-    super(cluster, traits, ImmutableList.of(), left, right, condition, variablesSet, joinType);
+    super(cluster, traits, ImmutableList.of(), left, right, condition, null, variablesSet, joinType);
   }
 
   @Deprecated // to be removed before 2.0
@@ -64,7 +64,7 @@ public class EnumerableNestedLoopJoin extends Join implements EnumerableRel {
   }
 
   @Override public EnumerableNestedLoopJoin copy(RelTraitSet traitSet,
-      RexNode condition, RelNode left, RelNode right, JoinRelType joinType,
+      RexNode condition, RexNode partitionBy, RelNode left, RelNode right, JoinRelType joinType,
       boolean semiJoinDone) {
     return new EnumerableNestedLoopJoin(getCluster(), traitSet, left, right,
         condition, variablesSet, joinType);

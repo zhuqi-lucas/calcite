@@ -40,12 +40,12 @@ public class PigJoin extends Join implements PigRel {
   /** Creates a PigJoin. */
   public PigJoin(RelOptCluster cluster, RelTraitSet traitSet, RelNode left, RelNode right,
       RexNode condition, JoinRelType joinType) {
-    super(cluster, traitSet, ImmutableList.of(), left, right, condition,
+    super(cluster, traitSet, ImmutableList.of(), left, right, condition,null,
         ImmutableSet.of(), joinType);
     assert getConvention() == PigRel.CONVENTION;
   }
 
-  @Override public Join copy(RelTraitSet traitSet, RexNode conditionExpr, RelNode left,
+  @Override public Join copy(RelTraitSet traitSet, RexNode conditionExpr, RexNode partitionBy, RelNode left,
       RelNode right, JoinRelType joinType, boolean semiJoinDone) {
     return new PigJoin(getCluster(), traitSet, left, right, conditionExpr, joinType);
   }

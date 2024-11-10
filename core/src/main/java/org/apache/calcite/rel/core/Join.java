@@ -64,6 +64,7 @@ public abstract class Join extends BiRel implements Hintable {
   //~ Instance fields --------------------------------------------------------
 
   protected final RexNode condition;
+  protected final RexNode partitionBy;
   protected final ImmutableSet<CorrelationId> variablesSet;
   protected final ImmutableList<RelHint> hints;
 
@@ -86,6 +87,7 @@ public abstract class Join extends BiRel implements Hintable {
    * @param left             Left input
    * @param right            Right input
    * @param condition        Join condition
+   * @param partitionBy      Partition by
    * @param joinType         Join type
    * @param variablesSet     variables that are set by the
    *                         LHS and used by the RHS and are not available to
@@ -98,6 +100,7 @@ public abstract class Join extends BiRel implements Hintable {
       RelNode left,
       RelNode right,
       RexNode condition,
+      RexNode partitionBy,
       Set<CorrelationId> variablesSet,
       JoinRelType joinType) {
     super(cluster, traitSet, left, right);
@@ -106,15 +109,16 @@ public abstract class Join extends BiRel implements Hintable {
     this.joinType = requireNonNull(joinType, "joinType");
     this.joinInfo = JoinInfo.of(left, right, condition);
     this.hints = ImmutableList.copyOf(hints);
+    this.partitionBy = partitionBy;
   }
 
   @Deprecated // to be removed before 2.0
   protected Join(
       RelOptCluster cluster, RelTraitSet traitSet, RelNode left,
-      RelNode right, RexNode condition, Set<CorrelationId> variablesSet,
+      RelNode right, RexNode condition, RexNode partitionBy, Set<CorrelationId> variablesSet,
       JoinRelType joinType) {
     this(cluster, traitSet, ImmutableList.of(), left, right,
-        condition, variablesSet, joinType);
+        condition, partitionBy, variablesSet, joinType);
   }
 
   @Deprecated // to be removed before 2.0
@@ -124,9 +128,10 @@ public abstract class Join extends BiRel implements Hintable {
       RelNode left,
       RelNode right,
       RexNode condition,
+      RexNode partitionBy,
       JoinRelType joinType,
       Set<String> variablesStopped) {
-    this(cluster, traitSet, ImmutableList.of(), left, right, condition,
+    this(cluster, traitSet, ImmutableList.of(), left, right, condition,partitionBy,
         CorrelationId.setOf(variablesStopped), joinType);
   }
 
@@ -137,11 +142,15 @@ public abstract class Join extends BiRel implements Hintable {
     if (this.condition == condition) {
       return this;
     }
-    return copy(traitSet, condition, left, right, joinType, isSemiJoinDone());
+    return copy(traitSet, condition, partitionBy, left, right, joinType, isSemiJoinDone());
   }
 
   public RexNode getCondition() {
     return condition;
+  }
+
+  public RexNode getPartitionBy() {
+    return partitionBy;
   }
 
   public JoinRelType getJoinType() {
@@ -313,7 +322,7 @@ public abstract class Join extends BiRel implements Hintable {
 
   @Override public Join copy(RelTraitSet traitSet, List<RelNode> inputs) {
     assert inputs.size() == 2;
-    return copy(traitSet, getCondition(), inputs.get(0), inputs.get(1),
+    return copy(traitSet, getCondition(), getPartitionBy(), inputs.get(0), inputs.get(1),
         joinType, isSemiJoinDone());
   }
 
@@ -325,6 +334,7 @@ public abstract class Join extends BiRel implements Hintable {
    *
    * @param traitSet      Traits
    * @param conditionExpr Condition
+   * @param partitionBy   Partition by
    * @param left          Left input
    * @param right         Right input
    * @param joinType      Join type
@@ -332,7 +342,7 @@ public abstract class Join extends BiRel implements Hintable {
    *                      semi-join
    * @return Copy of this join
    */
-  public abstract Join copy(RelTraitSet traitSet, RexNode conditionExpr,
+  public abstract Join copy(RelTraitSet traitSet, RexNode conditionExpr, RexNode partitionBy,
       RelNode left, RelNode right, JoinRelType joinType, boolean semiJoinDone);
 
   /**

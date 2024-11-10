@@ -3214,7 +3214,7 @@ public class RelBuilder {
     } else {
       RelNode join0 =
           struct.joinFactory.createJoin(left.rel, right.rel,
-              ImmutableList.of(), condition, variablesSet, joinType, false);
+              ImmutableList.of(), condition, null, variablesSet, joinType, false);
 
       if (join0 instanceof Join && config.pushJoinCondition()) {
         join = RelOptUtil.pushDownJoinConditions((Join) join0, this);
@@ -3310,6 +3310,7 @@ public class RelBuilder {
             right.rel,
             ImmutableList.of(),
             and(conditions),
+            null,
             ImmutableSet.of(),
             JoinRelType.SEMI,
             false);
@@ -3347,6 +3348,7 @@ public class RelBuilder {
             right.rel,
             ImmutableList.of(),
             and(conditions),
+            null,
             ImmutableSet.of(),
             JoinRelType.ANTI,
             false);

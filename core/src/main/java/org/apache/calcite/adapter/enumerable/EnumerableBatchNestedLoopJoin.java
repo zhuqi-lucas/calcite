@@ -64,7 +64,7 @@ public class EnumerableBatchNestedLoopJoin extends Join implements EnumerableRel
       Set<CorrelationId> variablesSet,
       ImmutableBitSet requiredColumns,
       JoinRelType joinType) {
-    super(cluster, traits, ImmutableList.of(), left, right, condition, variablesSet, joinType);
+    super(cluster, traits, ImmutableList.of(), left, right, condition, null, variablesSet, joinType);
     this.requiredColumns = requiredColumns;
   }
 
@@ -113,7 +113,7 @@ public class EnumerableBatchNestedLoopJoin extends Join implements EnumerableRel
   }
 
   @Override public EnumerableBatchNestedLoopJoin copy(RelTraitSet traitSet,
-      RexNode condition, RelNode left, RelNode right, JoinRelType joinType,
+      RexNode condition, RexNode partitionBy, RelNode left, RelNode right, JoinRelType joinType,
       boolean semiJoinDone) {
     return new EnumerableBatchNestedLoopJoin(getCluster(), traitSet,
         left, right, condition, variablesSet, requiredColumns, joinType);

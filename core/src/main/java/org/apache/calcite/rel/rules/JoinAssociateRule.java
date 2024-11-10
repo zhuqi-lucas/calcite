@@ -153,12 +153,12 @@ public class JoinAssociateRule
     }
 
     final Join newBottomJoin =
-        bottomJoin.copy(bottomJoin.getTraitSet(), newBottomCondition, relB,
+        bottomJoin.copy(bottomJoin.getTraitSet(), newBottomCondition, null, relB,
             relC, JoinRelType.INNER, false);
 
     @SuppressWarnings("SuspiciousNameCombination")
     final Join newTopJoin =
-        topJoin.copy(topJoin.getTraitSet(), newTopCondition, relA,
+        topJoin.copy(topJoin.getTraitSet(), newTopCondition, null, relA,
             newBottomJoin, JoinRelType.INNER, false);
 
     call.transformTo(newTopJoin);

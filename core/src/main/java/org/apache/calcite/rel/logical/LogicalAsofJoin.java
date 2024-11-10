@@ -139,7 +139,7 @@ public final class LogicalAsofJoin extends AsofJoin {
   }
 
   @Override public Join copy(
-      RelTraitSet traitSet, RexNode conditionExpr, RelNode left, RelNode right,
+      RelTraitSet traitSet, RexNode conditionExpr, RexNode partitionBy, RelNode left, RelNode right,
       JoinRelType joinType, boolean semiJoinDone) {
     // This method does not provide the matchCondition as an argument, so it should never be called
     throw new RuntimeException("This method should not be called");

@@ -391,6 +391,7 @@ public abstract class ReduceExpressionsRule<C extends ReduceExpressionsRule.Conf
           join.copy(
               join.getTraitSet(),
               expList.get(0),
+              join.getPartitionBy(),
               join.getLeft(),
               join.getRight(),
               join.getJoinType(),

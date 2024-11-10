@@ -1694,7 +1694,8 @@ public class SqlValidatorImpl implements SqlValidatorWithHints {
             joinType.symbol(SqlParserPos.ZERO),
             targetTable,
             JoinConditionType.ON.symbol(SqlParserPos.ZERO),
-            call.getCondition());
+            call.getCondition(),
+            null);
     SqlSelect select =
         new SqlSelect(SqlParserPos.ZERO, null, selectList, outerJoin, null,
             null, null, null, null, null, null, null, null);

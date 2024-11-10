@@ -106,6 +106,7 @@ public class JoinUnionTransposeRule
           join.copy(
               join.getTraitSet(),
               join.getCondition(),
+              join.getPartitionBy(),
               joinLeft,
               joinRight,
               join.getJoinType(),

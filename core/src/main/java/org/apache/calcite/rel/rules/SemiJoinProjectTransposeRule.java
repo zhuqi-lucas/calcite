@@ -86,6 +86,7 @@ public class SemiJoinProjectTransposeRule
             // No need to copy the hints, the framework would try to do that.
             ImmutableList.of(),
             newCondition,
+            semiJoin.getPartitionBy(),
             ImmutableSet.of(), JoinRelType.SEMI);
 
     // Create the new projection.  Note that the projection expressions

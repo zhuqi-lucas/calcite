@@ -251,7 +251,7 @@ public class JoinProjectTransposeRule
             requireNonNull(mergedProgram.getCondition(),
                 () -> "mergedProgram.getCondition() for " + mergedProgram));
     final Join newJoin =
-        join.copy(join.getTraitSet(), newCondition,
+        join.copy(join.getTraitSet(), newCondition, join.getPartitionBy(),
             leftJoinChild, rightJoinChild, join.getJoinType(),
             join.isSemiJoinDone());
 

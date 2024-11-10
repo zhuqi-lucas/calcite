@@ -6124,6 +6124,24 @@ LogicalProject(EXPR$0=[LAST_VALUE($7) OVER (ORDER BY $0)])
 ]]>
     </Resource>
   </TestCase>
+  <TestCase name="testPartionedJoin">
+    <Resource name="sql">
+      <![CDATA[SELECT e.ename, e.empno, a.name, a.deptno
+FROM emp e
+LEFT JOIN dept a partition by (a.deptno) ON e.ename = a.name
+ORDER BY 2]]>
+    </Resource>
+    <Resource name="plan">
+      <![CDATA[
+LogicalSort(sort0=[$1], dir0=[ASC])
+  LogicalProject(ENAME=[$1], EMPNO=[$0], NAME=[$10], DEPTNO=[$9])
+    LogicalJoin(condition=[=($1, $11)], joinType=[left])
+      LogicalTableScan(table=[[CATALOG, SALES, EMP]])
+      LogicalProject(DEPTNO=[$0], NAME=[$1], NAME0=[CAST($1):VARCHAR(20) NOT NULL])
+        LogicalTableScan(table=[[CATALOG, SALES, DEPT]])
+]]>
+    </Resource>
+  </TestCase>
   <TestCase name="testPercentileCont">
     <Resource name="sql">
       <![CDATA[select

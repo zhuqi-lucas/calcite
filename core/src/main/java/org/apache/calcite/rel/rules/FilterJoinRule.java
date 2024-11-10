@@ -206,6 +206,7 @@ public abstract class FilterJoinRule<C extends FilterJoinRule.Config>
         join.copy(
             join.getTraitSet(),
             joinFilter,
+            join.getPartitionBy(),
             leftRel,
             rightRel,
             joinType,

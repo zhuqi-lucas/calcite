@@ -2070,6 +2070,7 @@ SqlNode JoinOrCommaTable(SqlNode e) :
             joinType,
             e2,
             JoinConditionType.NONE.symbol(SqlParserPos.ZERO),
+            null,
             null);
     }
 |
@@ -2079,7 +2080,7 @@ SqlNode JoinOrCommaTable(SqlNode e) :
 /** Matches "LEFT JOIN t ON ...", "RIGHT JOIN t USING ...", "JOIN t". */
 SqlNode JoinTable(SqlNode e) :
 {
-    SqlNode e2, condition, matchCondition = null;
+    SqlNode e2, condition, partitionColumns = null, matchCondition = null;
     final SqlLiteral natural, joinType, on, using;
     SqlNodeList list;
 }
@@ -2101,6 +2102,7 @@ SqlNode JoinTable(SqlNode e) :
     joinType = JoinType()
     e2 = TableRef1(ExprContext.ACCEPT_QUERY_OR_JOIN)
     (
+        [ <PARTITION> <BY> partitionColumns =  Expression(ExprContext.ACCEPT_SUB_QUERY) ]
         [ <MATCH_CONDITION> matchCondition = Expression(ExprContext.ACCEPT_SUB_QUERY) ]
         <ON> { on = JoinConditionType.ON.symbol(getPos()); }
         condition = Expression(ExprContext.ACCEPT_SUB_QUERY) {
@@ -2128,7 +2130,8 @@ SqlNode JoinTable(SqlNode e) :
                 joinType,
                 e2,
                 on,
-                condition);
+                condition,
+                partitionColumns);
         }
     |
         <USING> { using = JoinConditionType.USING.symbol(getPos()); }
@@ -2139,7 +2142,8 @@ SqlNode JoinTable(SqlNode e) :
                 joinType,
                 e2,
                 using,
-                new SqlNodeList(list, Span.of(using).end(this)));
+                new SqlNodeList(list, Span.of(using).end(this)),
+                partitionColumns);
         }
     |
         {
@@ -2149,7 +2153,8 @@ SqlNode JoinTable(SqlNode e) :
                 joinType,
                 e2,
                 JoinConditionType.NONE.symbol(joinType.getParserPosition()),
-                null);
+                null,
+                partitionColumns);
         }
     )
 |
@@ -2164,6 +2169,7 @@ SqlNode JoinTable(SqlNode e) :
             joinType,
             e2,
             JoinConditionType.NONE.symbol(SqlParserPos.ZERO),
+            null,
             null);
     }
 |
@@ -2178,7 +2184,8 @@ SqlNode JoinTable(SqlNode e) :
             joinType,
             e2,
             JoinConditionType.ON.symbol(SqlParserPos.ZERO),
-            SqlLiteral.createBoolean(true, joinType.getParserPosition()));
+            SqlLiteral.createBoolean(true, joinType.getParserPosition()),
+            null);
     }
 }
 

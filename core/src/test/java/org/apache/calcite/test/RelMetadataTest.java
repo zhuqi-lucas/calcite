@@ -2333,7 +2333,7 @@ public class RelMetadataTest {
     // Join
     final LogicalJoin join =
         LogicalJoin.create(empScan, deptProject, ImmutableList.of(),
-            rexBuilder.makeLiteral(true), ImmutableSet.of(), JoinRelType.INNER);
+            rexBuilder.makeLiteral(true), null, ImmutableSet.of(), JoinRelType.INNER);
     rowSize = mq.getAverageRowSize(join);
     columnSizes = mq.getAverageColumnSizes(join);
     assertThat(columnSizes, hasSize(13));
@@ -3547,7 +3547,7 @@ public class RelMetadataTest {
     // Join
     final LogicalJoin join =
         LogicalJoin.create(nodeWithUnknown, node, ImmutableList.of(),
-            rexBuilder.makeLiteral(true), ImmutableSet.of(), JoinRelType.INNER);
+            rexBuilder.makeLiteral(true), null, ImmutableSet.of(), JoinRelType.INNER);
     final RelMetadataQuery mq = node.getCluster().getMetadataQuery();
     final Set<RelTableRef> tableReferences = mq.getTableReferences(join);
     assertNull(tableReferences);
@@ -4053,7 +4053,7 @@ public class RelMetadataTest {
         LogicalTableScan.create(cluster, deptTable, hints);
     final LogicalJoin join =
         LogicalJoin.create(empScan, deptScan, ImmutableList.of(),
-            rexBuilder.makeLiteral(true), ImmutableSet.of(), JoinRelType.INNER);
+            rexBuilder.makeLiteral(true), null, ImmutableSet.of(), JoinRelType.INNER);
     assertTrue(
         RelMdUtil.checkInputForCollationAndLimit(mq, join,
             join.getTraitSet().getCollation(), null, null), () ->

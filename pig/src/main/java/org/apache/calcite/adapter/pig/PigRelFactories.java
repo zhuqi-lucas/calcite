@@ -116,7 +116,7 @@ public class PigRelFactories {
     public static final PigJoinFactory INSTANCE = new PigJoinFactory();
 
     @Override public RelNode createJoin(RelNode left, RelNode right, List<RelHint> hints,
-        RexNode condition, Set<CorrelationId> variablesSet, JoinRelType joinType,
+        RexNode condition, RexNode partitionBy, Set<CorrelationId> variablesSet, JoinRelType joinType,
         boolean semiJoinDone) {
       Util.discard(hints);
       Util.discard(variablesSet);

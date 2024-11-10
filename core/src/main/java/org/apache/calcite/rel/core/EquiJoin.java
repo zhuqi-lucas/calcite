@@ -55,7 +55,7 @@ public abstract class EquiJoin extends Join {
   protected EquiJoin(RelOptCluster cluster, RelTraitSet traits, RelNode left,
       RelNode right, RexNode condition, Set<CorrelationId> variablesSet,
       JoinRelType joinType) {
-    super(cluster, traits, ImmutableList.of(), left, right, condition, variablesSet, joinType);
+    super(cluster, traits, ImmutableList.of(), left, right, condition, null, variablesSet, joinType);
     this.leftKeys = requireNonNull(joinInfo.leftKeys);
     this.rightKeys = requireNonNull(joinInfo.rightKeys);
     assert joinInfo.isEqui() : "Create EquiJoin with non-equi join condition.";
@@ -67,7 +67,7 @@ public abstract class EquiJoin extends Join {
       RelNode right, RexNode condition, ImmutableIntList leftKeys,
       ImmutableIntList rightKeys, Set<CorrelationId> variablesSet,
       JoinRelType joinType) {
-    super(cluster, traits, ImmutableList.of(), left, right, condition, variablesSet, joinType);
+    super(cluster, traits, ImmutableList.of(), left, right, condition, null, variablesSet, joinType);
     this.leftKeys = requireNonNull(leftKeys, "leftKeys");
     this.rightKeys = requireNonNull(rightKeys, "rightKeys");
   }

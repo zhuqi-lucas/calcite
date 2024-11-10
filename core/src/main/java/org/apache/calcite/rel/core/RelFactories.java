@@ -390,6 +390,7 @@ public class RelFactories {
      * @param right            Right input
      * @param hints            Hints
      * @param condition        Join condition
+     * @param partitionBy      Partition by columns
      * @param variablesSet     Set of variables that are set by the
      *                         LHS and used by the RHS and are not available to
      *                         nodes above this LogicalJoin in the tree
@@ -398,7 +399,7 @@ public class RelFactories {
      *                         semi-join
      */
     RelNode createJoin(RelNode left, RelNode right, List<RelHint> hints,
-        RexNode condition, Set<CorrelationId> variablesSet, JoinRelType joinType,
+        RexNode condition, RexNode partitionBy, Set<CorrelationId> variablesSet, JoinRelType joinType,
         boolean semiJoinDone);
   }
 
@@ -426,9 +427,9 @@ public class RelFactories {
    */
   private static class JoinFactoryImpl implements JoinFactory {
     @Override public RelNode createJoin(RelNode left, RelNode right, List<RelHint> hints,
-        RexNode condition, Set<CorrelationId> variablesSet,
+        RexNode condition, RexNode partitionBy, Set<CorrelationId> variablesSet,
         JoinRelType joinType, boolean semiJoinDone) {
-      return LogicalJoin.create(left, right, hints, condition, variablesSet, joinType,
+      return LogicalJoin.create(left, right, hints, condition, partitionBy, variablesSet, joinType,
           semiJoinDone, ImmutableList.of());
     }
   }

@@ -83,6 +83,7 @@ public class JoinAddRedundantSemiJoinRule
             origJoinRel.getRight(),
             ImmutableList.of(),
             origJoinRel.getCondition(),
+            origJoinRel.getPartitionBy(),
             ImmutableSet.of(),
             JoinRelType.SEMI);
 
@@ -90,6 +91,7 @@ public class JoinAddRedundantSemiJoinRule
         origJoinRel.copy(
             origJoinRel.getTraitSet(),
             origJoinRel.getCondition(),
+            origJoinRel.getPartitionBy(),
             semiJoin,
             origJoinRel.getRight(),
             JoinRelType.INNER,

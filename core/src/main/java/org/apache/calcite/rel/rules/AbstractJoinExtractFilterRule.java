@@ -68,6 +68,7 @@ public abstract class AbstractJoinExtractFilterRule
         join.copy(
             join.getTraitSet(),
             builder.literal(true),
+            null,
             join.getLeft(),
             join.getRight(),
             join.getJoinType(),

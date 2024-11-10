@@ -48,7 +48,7 @@ public abstract class AsofJoin extends Join {
       RexNode matchCondition,
       Set<CorrelationId> variablesSet,
       JoinRelType joinType) {
-    super(cluster, traitSet, hints, left, right, condition, variablesSet, joinType);
+    super(cluster, traitSet, hints, left, right, condition, null, variablesSet, joinType);
     this.matchCondition = requireNonNull(matchCondition, "matchCondition");
   }
 

@@ -178,7 +178,7 @@ public class JoinPushThroughJoinRule
     RexNode newBottomCondition =
         RexUtil.composeConjunction(rexBuilder, newBottomList);
     final Join newBottomJoin =
-        bottomJoin.copy(bottomJoin.getTraitSet(), newBottomCondition, relA,
+        bottomJoin.copy(bottomJoin.getTraitSet(), newBottomCondition, null, relA,
             relC, bottomJoin.getJoinType(), bottomJoin.isSemiJoinDone());
 
     // target: | A       | C      | B |
@@ -198,7 +198,7 @@ public class JoinPushThroughJoinRule
         RexUtil.composeConjunction(rexBuilder, newTopList);
     @SuppressWarnings("SuspiciousNameCombination")
     final Join newTopJoin =
-        topJoin.copy(topJoin.getTraitSet(), newTopCondition, newBottomJoin,
+        topJoin.copy(topJoin.getTraitSet(), newTopCondition, null, newBottomJoin,
             relB, topJoin.getJoinType(), topJoin.isSemiJoinDone());
 
     assert !Mappings.isIdentity(topMapping);
@@ -281,7 +281,7 @@ public class JoinPushThroughJoinRule
     RexNode newBottomCondition =
         RexUtil.composeConjunction(rexBuilder, newBottomList);
     final Join newBottomJoin =
-        bottomJoin.copy(bottomJoin.getTraitSet(), newBottomCondition, relC,
+        bottomJoin.copy(bottomJoin.getTraitSet(), newBottomCondition, null, relC,
             relB, bottomJoin.getJoinType(), bottomJoin.isSemiJoinDone());
 
     // target: | C      | B | A       |
@@ -301,7 +301,7 @@ public class JoinPushThroughJoinRule
         RexUtil.composeConjunction(rexBuilder, newTopList);
     @SuppressWarnings("SuspiciousNameCombination")
     final Join newTopJoin =
-        topJoin.copy(topJoin.getTraitSet(), newTopCondition, newBottomJoin,
+        topJoin.copy(topJoin.getTraitSet(), newTopCondition, null, newBottomJoin,
             relA, topJoin.getJoinType(), topJoin.isSemiJoinDone());
 
     final RelBuilder relBuilder = call.builder();

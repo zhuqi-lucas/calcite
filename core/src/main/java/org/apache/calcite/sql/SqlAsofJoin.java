@@ -39,7 +39,7 @@ public class SqlAsofJoin extends SqlJoin {
   public SqlAsofJoin(SqlParserPos pos, SqlNode left, SqlLiteral natural,
                      SqlLiteral joinType, SqlNode right, SqlLiteral conditionType,
                      @Nullable SqlNode condition, SqlNode matchCondition) {
-    super(pos, left, natural, joinType, right, conditionType, condition);
+    super(pos, left, natural, joinType, right, conditionType, condition, null);
     this.matchCondition = matchCondition;
   }
 

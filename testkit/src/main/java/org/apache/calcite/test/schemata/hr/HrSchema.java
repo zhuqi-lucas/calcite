@@ -70,6 +70,7 @@ public class HrSchema {
           new Location(-122, 38)),
       new Department(30, "Marketing", ImmutableList.of(), new Location(0, 52)),
       new Department(40, "HR", Collections.singletonList(emps[1]), null),
+      new Department(100, "Qi", Collections.singletonList(emps[1]), null),
   };
   public final Dependent[] dependents = {
       new Dependent(10, "Michael"),

@@ -4658,6 +4658,29 @@ public class SqlParserTest {
         .fails("MATCH_CONDITION only allowed with ASOF JOIN");
   }
 
+  // Partitioned outer join
+  // select d.dname, d.deptno, e.job, e.ename
+  //from dept d
+  //left join emp e
+  //  partition by (e.job)
+  //  on e.deptno = d.deptno
+  //order by 2;
+  @Test void testPartitionedOuterJoin() {
+    final String sql = "select d.dname, d.deptno, e.job, e.ename\n"
+        + "from dept d\n"
+        + "left join emp e\n"
+        + "  partition by (e.job)\n"
+        + "  on e.deptno = d.deptno\n"
+        + "order by 2";
+    final String expected = "SELECT `D`.`DNAME`, `D`.`DEPTNO`, `E`.`JOB`, `E`.`ENAME`\n"
+        + "FROM `DEPT` AS `D`\n"
+        + "LEFT JOIN `EMP` AS `E`\n"
+        +"PARTITION BY `E`.`JOB` ON (`E`.`DEPTNO` = `D`.`DEPTNO`)\n"
+        + "ORDER BY 2";
+    sql(sql).ok(expected);
+  }
+
+
   @Test void testCollectionTableWithLateral() {
     final String sql = "select * from dept, lateral table(ramp(dept.deptno))";
     final String expected = "SELECT *\n"

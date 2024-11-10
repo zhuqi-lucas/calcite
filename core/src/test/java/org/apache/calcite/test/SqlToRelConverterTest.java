@@ -293,6 +293,22 @@ class SqlToRelConverterTest extends SqlToRelTestBase {
     sql(sql).ok();
   }
 
+  @Test void testPartionedJoin(){
+    // Partitioned outer join
+    // select d.dname, d.deptno, e.job, e.ename
+    //from dept d
+    //left join emp e
+    //  partition by (e.job)
+    //  on e.deptno = d.deptno
+    //order by 2;
+
+    final String sql = "SELECT e.ename, e.empno, a.name, a.deptno\n"
+        + "FROM emp e\n"
+        + "LEFT JOIN dept a partition by (a.deptno) ON e.ename = a.name\n"
+        + "ORDER BY 2";
+    sql(sql).ok();
+  }
+
   /** Test case for <a href="https://issues.apache.org/jira/browse/CALCITE-6540">
    * RelOptUtil.pushDownJoinConditions does not correctly adjust ASOF joins match conditions</a>.
    */

@@ -385,14 +385,14 @@ public class StreamRules {
       final LogicalDelta rightWithDelta = LogicalDelta.create(right);
       final LogicalJoin joinL =
           LogicalJoin.create(left, rightWithDelta, join.getHints(),
-              join.getCondition(), join.getVariablesSet(), join.getJoinType(),
+              join.getCondition(), join.getPartitionBy(), join.getVariablesSet(), join.getJoinType(),
               join.isSemiJoinDone(),
               ImmutableList.copyOf(join.getSystemFieldList()));
 
       final LogicalDelta leftWithDelta = LogicalDelta.create(left);
       final LogicalJoin joinR =
           LogicalJoin.create(leftWithDelta, right, join.getHints(),
-              join.getCondition(), join.getVariablesSet(), join.getJoinType(),
+              join.getCondition(), join.getPartitionBy(), join.getVariablesSet(), join.getJoinType(),
               join.isSemiJoinDone(),
               ImmutableList.copyOf(join.getSystemFieldList()));
 

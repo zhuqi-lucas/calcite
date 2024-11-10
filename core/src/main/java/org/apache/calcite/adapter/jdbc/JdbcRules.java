@@ -117,7 +117,7 @@ public class JdbcRules {
       };
 
   static final RelFactories.JoinFactory JOIN_FACTORY =
-      (left, right, hints, condition, variablesSet, joinType, semiJoinDone) -> {
+      (left, right, hints, condition, partitionBy, variablesSet, joinType, semiJoinDone) -> {
         final RelOptCluster cluster = left.getCluster();
         final RelTraitSet traitSet =
             cluster.traitSetOf(
@@ -384,7 +384,7 @@ public class JdbcRules {
         RelNode left, RelNode right, RexNode condition,
         Set<CorrelationId> variablesSet, JoinRelType joinType)
         throws InvalidRelException {
-      super(cluster, traitSet, ImmutableList.of(), left, right, condition, variablesSet, joinType);
+      super(cluster, traitSet, ImmutableList.of(), left, right, condition, null, variablesSet, joinType);
     }
 
     @Deprecated // to be removed before 2.0
@@ -401,7 +401,7 @@ public class JdbcRules {
           CorrelationId.setOf(variablesStopped), joinType);
     }
 
-    @Override public JdbcJoin copy(RelTraitSet traitSet, RexNode condition,
+    @Override public JdbcJoin copy(RelTraitSet traitSet, RexNode condition, RexNode partitionBy,
         RelNode left, RelNode right, JoinRelType joinType,
         boolean semiJoinDone) {
       try {

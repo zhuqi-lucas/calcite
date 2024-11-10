@@ -3860,7 +3860,7 @@ public abstract class RelOptUtil {
     } else {
       relBuilder.push(
           originalJoin.copy(originalJoin.getTraitSet(),
-              joinCond, left, right, joinType, originalJoin.isSemiJoinDone()));
+              joinCond, originalJoin.getPartitionBy(), left, right, joinType, originalJoin.isSemiJoinDone()));
     }
     if (!extraLeftExprs.isEmpty() || !extraRightExprs.isEmpty()) {
       final int totalFields = joinType.projectsRight()

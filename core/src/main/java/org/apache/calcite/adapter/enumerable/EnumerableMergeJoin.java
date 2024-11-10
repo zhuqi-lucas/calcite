@@ -77,7 +77,7 @@ public class EnumerableMergeJoin extends Join implements EnumerableRel {
       RexNode condition,
       Set<CorrelationId> variablesSet,
       JoinRelType joinType) {
-    super(cluster, traits, ImmutableList.of(), left, right, condition, variablesSet, joinType);
+    super(cluster, traits, ImmutableList.of(), left, right, condition, null, variablesSet, joinType);
     assert getConvention() instanceof EnumerableConvention;
     final List<RelCollation> leftCollations = getCollations(left.getTraitSet());
     final List<RelCollation> rightCollations = getCollations(right.getTraitSet());
@@ -414,7 +414,7 @@ public class EnumerableMergeJoin extends Join implements EnumerableRel {
   }
 
   @Override public EnumerableMergeJoin copy(RelTraitSet traitSet,
-      RexNode condition, RelNode left, RelNode right, JoinRelType joinType,
+      RexNode condition, RexNode partitionBy, RelNode left, RelNode right, JoinRelType joinType,
       boolean semiJoinDone) {
     return new EnumerableMergeJoin(getCluster(), traitSet, left, right,
         condition, variablesSet, joinType);

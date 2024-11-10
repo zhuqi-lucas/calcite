@@ -128,7 +128,7 @@ public class JoinCommuteRule
     // doesn't prevent us from seeing any new combinations assuming
     // that the planner tries the desired order (semi-joins after swaps).
     Join newJoin =
-        join.copy(join.getTraitSet(), condition, join.getRight(),
+        join.copy(join.getTraitSet(), condition, null, join.getRight(),
             join.getLeft(), joinType.swap(), join.isSemiJoinDone());
     final List<RexNode> exps =
         RelOptUtil.createSwappedJoinExprs(newJoin, join, true);

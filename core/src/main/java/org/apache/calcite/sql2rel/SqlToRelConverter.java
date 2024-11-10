@@ -40,17 +40,7 @@ import org.apache.calcite.rel.RelNode;
 import org.apache.calcite.rel.RelRoot;
 import org.apache.calcite.rel.RelShuttleImpl;
 import org.apache.calcite.rel.SingleRel;
-import org.apache.calcite.rel.core.Aggregate;
-import org.apache.calcite.rel.core.AggregateCall;
-import org.apache.calcite.rel.core.Collect;
-import org.apache.calcite.rel.core.CorrelationId;
-import org.apache.calcite.rel.core.Filter;
-import org.apache.calcite.rel.core.Join;
-import org.apache.calcite.rel.core.JoinInfo;
-import org.apache.calcite.rel.core.JoinRelType;
-import org.apache.calcite.rel.core.Project;
-import org.apache.calcite.rel.core.RelFactories;
-import org.apache.calcite.rel.core.Sort;
+import org.apache.calcite.rel.core.*;
 import org.apache.calcite.rel.hint.HintStrategyTable;
 import org.apache.calcite.rel.hint.Hintable;
 import org.apache.calcite.rel.hint.RelHint;
@@ -242,8 +232,8 @@ import static java.util.Objects.requireNonNull;
 
 /**
  * Converts a SQL parse tree (consisting of
- * {@link org.apache.calcite.sql.SqlNode} objects) into a relational algebra
- * expression (consisting of {@link org.apache.calcite.rel.RelNode} objects).
+ * {@link SqlNode} objects) into a relational algebra
+ * expression (consisting of {@link RelNode} objects).
  *
  * <p>The public entry points are: {@link #convertQuery},
  * {@link #convertExpression(SqlNode)}.
@@ -285,7 +275,7 @@ public class SqlToRelConverter {
   private final SqlNodeToRexConverter exprConverter;
   private final HintStrategyTable hintStrategies;
   private int explainParamCount;
-  public final SqlToRelConverter.Config config;
+  public final Config config;
   private final RelBuilder relBuilder;
 
   /**
@@ -854,7 +844,7 @@ public class SqlToRelConverter {
    * a relational expression to make the results unique.
    *
    * <p>If the SELECT clause contains duplicate expressions, adds
-   * {@link org.apache.calcite.rel.logical.LogicalProject}s so that we are
+   * {@link LogicalProject}s so that we are
    * grouping on the minimal set of keys. The performance gain isn't huge, but
    * it is difficult to detect these duplicate expressions later.
    *
@@ -1318,7 +1308,7 @@ public class SqlToRelConverter {
                         -1, null, RelCollations.EMPTY, longType, null)));
         LogicalJoin join =
             LogicalJoin.create(bb.root(), aggregate, ImmutableList.of(),
-                rexBuilder.makeLiteral(true), ImmutableSet.of(), JoinRelType.INNER);
+                rexBuilder.makeLiteral(true), null,  ImmutableSet.of(), JoinRelType.INNER);
         bb.setRoot(join, false);
       }
       final RexNode rex =
@@ -1810,7 +1800,7 @@ public class SqlToRelConverter {
    * Gets the list size threshold under which {@link #convertInToOr} is used.
    * Lists of this size or greater will instead be converted to use a join
    * against an inline table
-   * ({@link org.apache.calcite.rel.logical.LogicalValues}) rather than a
+   * ({@link LogicalValues}) rather than a
    * predicate. A threshold of 0 forces usage of an inline table in all cases; a
    * threshold of Integer.MAX_VALUE forces usage of OR in all cases
    *
@@ -2955,7 +2945,7 @@ public class SqlToRelConverter {
   }
 
   protected void afterTableFunction(
-      SqlToRelConverter.Blackboard bb,
+      Blackboard bb,
       SqlCall call,
       LogicalTableFunctionScan callRel) {
   }
@@ -3288,6 +3278,7 @@ public class SqlToRelConverter {
 
     final JoinConditionType conditionType = join.getConditionType();
     final RexNode condition;
+    final RexNode partitionByExpr;
     RelNode rightRel;
     if (join.isNatural()) {
       condition =
@@ -3313,6 +3304,17 @@ public class SqlToRelConverter {
             convertOnCondition(fromBlackboard, sqlCondition, leftRel, tempRightRel);
         condition = conditionAndRightNode.left;
         rightRel = conditionAndRightNode.right;
+
+        SqlNode partitionBy = null;
+        if (join.getPartitionBy() != null) {
+          partitionBy =
+              requireNonNull(join.getPartitionBy(),
+                  () -> "getPartitionBy for join " + join);
+          System.out.println("partitionBy: " + partitionBy);
+          partitionByExpr =  fromBlackboard.convertExpression(partitionBy);
+          System.out.println("partitionByExpr: " + partitionByExpr);
+        }
+
         break;
       default:
         throw Util.unexpected(conditionType);
@@ -4693,6 +4695,7 @@ public class SqlToRelConverter {
               relNode,
               ImmutableList.of(),
               rexBuilder.makeLiteral(true),
+              null,
               ImmutableSet.of(),
               JoinRelType.INNER,
               false);
@@ -5074,7 +5077,7 @@ public class SqlToRelConverter {
 
     if (mapping.length != targetFields.size()) {
       throw new AssertionError("Columns partially mapped; src=" + targetFields
-          + ", dest=" + Util.transform(fields, RelDataTypeField::getName));
+          + ", dest=" + transform(fields, RelDataTypeField::getName));
     }
 
     return mapping;
@@ -6425,7 +6428,7 @@ public class SqlToRelConverter {
     Config withTrimUnusedFields(boolean trimUnusedFields);
 
     /** Returns the {@code createValuesRel} option. Controls whether instances
-     * of {@link org.apache.calcite.rel.logical.LogicalValues} are generated.
+     * of {@link LogicalValues} are generated.
      * These may not be supported by all physical implementations. */
     @Value.Default default boolean isCreateValuesRel() {
       return true;
@@ -6445,7 +6448,7 @@ public class SqlToRelConverter {
 
     /** Returns the {@code expand} option. Controls whether to expand
      * sub-queries. If false (the default), each sub-query becomes a
-     * {@link org.apache.calcite.rex.RexSubQuery}.
+     * {@link RexSubQuery}.
      *
      * <p>Setting {@code expand} to true is deprecated. Expansion still works,
      * but there will be less development effort in that area. */
@@ -6463,7 +6466,7 @@ public class SqlToRelConverter {
      * default {@link #DEFAULT_IN_SUB_QUERY_THRESHOLD}. Controls the list size
      * threshold under which {@link #convertInToOr} is used. Lists of this size
      * or greater will instead be converted to use a join against an inline
-     * table ({@link org.apache.calcite.rel.logical.LogicalValues}) rather than
+     * table ({@link LogicalValues}) rather than
      * a predicate. A threshold of 0 forces usage of an inline table in all
      * cases; a threshold of {@link Integer#MAX_VALUE} forces usage of OR in all
      * cases. */

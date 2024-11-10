@@ -142,6 +142,7 @@ public class ProjectJoinTransposeRule
         join.copy(
             join.getTraitSet(),
             requireNonNull(newJoinFilter, "newJoinFilter must not be null"),
+            join.getPartitionBy(),
             leftProject,
             rightProject,
             join.getJoinType(),

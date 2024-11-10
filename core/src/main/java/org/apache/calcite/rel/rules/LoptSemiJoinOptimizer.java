@@ -326,7 +326,7 @@ public class LoptSemiJoinOptimizer {
               semiJoinCondition);
     }
     return LogicalJoin.create(factRel, dimRel, ImmutableList.of(),
-        requireNonNull(semiJoinCondition, "semiJoinCondition"),
+        requireNonNull(semiJoinCondition, "semiJoinCondition"), null,
         ImmutableSet.of(), JoinRelType.SEMI);
   }
 
@@ -591,6 +591,7 @@ public class LoptSemiJoinOptimizer {
                 chosenSemiJoins[bestDimIdx],
                 ImmutableList.of(),
                 semiJoin.getCondition(),
+                semiJoin.getPartitionBy(),
                 ImmutableSet.of(),
                 JoinRelType.SEMI);
         chosenSemiJoins[factIdx] = chosenSemiJoin;

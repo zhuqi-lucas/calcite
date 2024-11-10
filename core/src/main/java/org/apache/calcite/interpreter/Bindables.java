@@ -533,7 +533,7 @@ public class Bindables {
         RelNode left, RelNode right, RexNode condition,
         Set<CorrelationId> variablesSet, JoinRelType joinType) {
       super(cluster, traitSet, ImmutableList.of(), left, right,
-          condition, variablesSet, joinType);
+          condition, null, variablesSet, joinType);
     }
 
     @Deprecated // to be removed before 2.0
@@ -544,7 +544,7 @@ public class Bindables {
           CorrelationId.setOf(variablesStopped), joinType);
     }
 
-    @Override public BindableJoin copy(RelTraitSet traitSet, RexNode conditionExpr,
+    @Override public BindableJoin copy(RelTraitSet traitSet, RexNode conditionExpr,RexNode partitionBy,
         RelNode left, RelNode right, JoinRelType joinType,
         boolean semiJoinDone) {
       return new BindableJoin(getCluster(), traitSet, left, right,

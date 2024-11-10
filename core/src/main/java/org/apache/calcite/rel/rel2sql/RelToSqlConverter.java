@@ -257,7 +257,8 @@ public class RelToSqlConverter extends SqlImplementor
             joinType.symbol(POS),
             rightResult.asFrom(),
             condType.symbol(POS),
-            sqlCondition);
+            sqlCondition,
+            null);
     return result(join, leftResult, rightResult);
   }
 
@@ -418,6 +419,7 @@ public class RelToSqlConverter extends SqlImplementor
             JoinType.COMMA.symbol(POS),
             rightLateralAs,
             JoinConditionType.NONE.symbol(POS),
+            null,
             null);
     return result(join, leftResult, rightResult);
   }

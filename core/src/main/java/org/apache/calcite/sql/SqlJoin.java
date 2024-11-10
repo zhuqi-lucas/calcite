@@ -61,12 +61,13 @@ public class SqlJoin extends SqlCall {
    */
   SqlLiteral conditionType;
   @Nullable SqlNode condition;
+  @Nullable SqlNode partitionBy;
 
   //~ Constructors -----------------------------------------------------------
 
   public SqlJoin(SqlParserPos pos, SqlNode left, SqlLiteral natural,
       SqlLiteral joinType, SqlNode right, SqlLiteral conditionType,
-      @Nullable SqlNode condition) {
+      @Nullable SqlNode condition, @Nullable SqlNode partitionBy) {
     super(pos);
     this.left = left;
     this.natural = requireNonNull(natural, "natural");
@@ -74,6 +75,7 @@ public class SqlJoin extends SqlCall {
     this.right = right;
     this.conditionType = requireNonNull(conditionType, "conditionType");
     this.condition = condition;
+    this.partitionBy = partitionBy;
 
     checkArgument(natural.getTypeName() == SqlTypeName.BOOLEAN);
     conditionType.getValueAs(JoinConditionType.class);
@@ -99,7 +101,7 @@ public class SqlJoin extends SqlCall {
   @SuppressWarnings("nullness")
   @Override public List<SqlNode> getOperandList() {
     return ImmutableNullableList.of(left, natural, joinType, right,
-        conditionType, condition);
+        conditionType, condition, partitionBy);
   }
 
   @SuppressWarnings("assignment.type.incompatible")
@@ -123,6 +125,9 @@ public class SqlJoin extends SqlCall {
     case 5:
       condition = operand;
       break;
+    case 6:
+      partitionBy = operand;
+      break;
     default:
       throw new AssertionError(i);
     }
@@ -130,6 +135,10 @@ public class SqlJoin extends SqlCall {
 
   public final @Nullable SqlNode getCondition() {
     return condition;
+  }
+
+  public final @Nullable SqlNode getPartitionBy() {
+    return partitionBy;
   }
 
   /** Returns a {@link JoinConditionType}, never null. */
@@ -202,7 +211,7 @@ public class SqlJoin extends SqlCall {
       assert functionQualifier == null;
       return new SqlJoin(pos, operands[0], (SqlLiteral) operands[1],
           (SqlLiteral) operands[2], operands[3], (SqlLiteral) operands[4],
-          operands[5]);
+          operands[5], operands[6]);
     }
 
     @Override public void unparse(
@@ -247,6 +256,13 @@ public class SqlJoin extends SqlCall {
         throw Util.unexpected(join.getJoinType());
       }
       join.right.unparse(writer, getRightPrec(), rightPrec);
+
+      SqlNode partitionBy = join.partitionBy;
+      if (partitionBy != null) {
+        writer.sep("PARTITION BY");
+        partitionBy.unparse(writer, leftPrec, rightPrec);
+      }
+
       SqlNode joinCondition = join.condition;
       if (joinCondition != null) {
         switch (join.getConditionType()) {

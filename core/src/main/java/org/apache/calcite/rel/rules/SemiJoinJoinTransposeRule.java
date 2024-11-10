@@ -178,6 +178,7 @@ public class SemiJoinJoinTransposeRule
             // No need to copy the hints, the framework would try to do that.
             ImmutableList.of(),
             newSemiJoinFilter,
+            null,
             ImmutableSet.of(),
             JoinRelType.SEMI);
 
@@ -195,6 +196,7 @@ public class SemiJoinJoinTransposeRule
         join.copy(
             join.getTraitSet(),
             join.getCondition(),
+            join.getPartitionBy(),
             left,
             right,
             join.getJoinType(),

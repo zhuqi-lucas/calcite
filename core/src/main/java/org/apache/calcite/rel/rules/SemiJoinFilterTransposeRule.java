@@ -72,6 +72,7 @@ public class SemiJoinFilterTransposeRule
             // No need to copy the hints, the framework would try to do that.
             ImmutableList.of(),
             semiJoin.getCondition(),
+            semiJoin.getPartitionBy(),
             ImmutableSet.of(),
             JoinRelType.SEMI);
 

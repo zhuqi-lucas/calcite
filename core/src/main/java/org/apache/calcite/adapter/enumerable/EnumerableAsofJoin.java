@@ -95,7 +95,7 @@ public class EnumerableAsofJoin extends AsofJoin implements EnumerableRel {
         variablesSet, joinType);
   }
 
-  @Override public EnumerableAsofJoin copy(RelTraitSet traitSet, RexNode condition,
+  @Override public EnumerableAsofJoin copy(RelTraitSet traitSet, RexNode condition, RexNode partitonBy,
                                            RelNode left, RelNode right, JoinRelType joinType,
                                            boolean semiJoinDone) {
     // This method does not know about the matchCondition, so it should not be called

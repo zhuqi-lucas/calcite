@@ -60,6 +60,7 @@ public class EnumerableHashJoin extends Join implements EnumerableRel {
       RelNode left,
       RelNode right,
       RexNode condition,
+      RexNode partitionBy,
       Set<CorrelationId> variablesSet,
       JoinRelType joinType) {
     super(
@@ -69,7 +70,7 @@ public class EnumerableHashJoin extends Join implements EnumerableRel {
         left,
         right,
         condition,
-        null,
+        partitionBy,
         variablesSet,
         joinType);
   }
@@ -79,7 +80,7 @@ public class EnumerableHashJoin extends Join implements EnumerableRel {
       RelNode left, RelNode right, RexNode condition, ImmutableIntList leftKeys,
       ImmutableIntList rightKeys, JoinRelType joinType,
       Set<String> variablesStopped) {
-    this(cluster, traits, left, right, condition, CorrelationId.setOf(variablesStopped), joinType);
+    this(cluster, traits, left, right, condition, null, CorrelationId.setOf(variablesStopped), joinType);
   }
 
   /** Creates an EnumerableHashJoin. */
@@ -87,6 +88,7 @@ public class EnumerableHashJoin extends Join implements EnumerableRel {
       RelNode left,
       RelNode right,
       RexNode condition,
+      RexNode partitionBy,
       Set<CorrelationId> variablesSet,
       JoinRelType joinType) {
     final RelOptCluster cluster = left.getCluster();
@@ -95,7 +97,7 @@ public class EnumerableHashJoin extends Join implements EnumerableRel {
         cluster.traitSetOf(EnumerableConvention.INSTANCE)
             .replaceIfs(RelCollationTraitDef.INSTANCE,
                 () -> RelMdCollation.enumerableHashJoin(mq, left, right, joinType));
-    return new EnumerableHashJoin(cluster, traitSet, left, right, condition,
+    return new EnumerableHashJoin(cluster, traitSet, left, right, condition, partitionBy,
         variablesSet, joinType);
   }
 
@@ -103,7 +105,7 @@ public class EnumerableHashJoin extends Join implements EnumerableRel {
       RelNode left, RelNode right, JoinRelType joinType,
       boolean semiJoinDone) {
     return new EnumerableHashJoin(getCluster(), traitSet, left, right,
-        condition, variablesSet, joinType);
+        condition, partitionBy, variablesSet, joinType);
   }
 
   @Override public @Nullable Pair<RelTraitSet, List<RelTraitSet>> passThroughTraits(

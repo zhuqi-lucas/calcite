@@ -89,6 +89,7 @@ class EnumerableJoinRule extends ConverterRule {
           left,
           right,
           condition,
+          join.getPartitionBy(),
           join.getVariablesSet(),
           join.getJoinType());
     }

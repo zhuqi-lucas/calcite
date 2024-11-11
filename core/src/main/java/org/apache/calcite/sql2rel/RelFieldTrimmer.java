@@ -16,6 +16,8 @@
  */
 package org.apache.calcite.sql2rel;
 
+import com.google.common.collect.ImmutableSet;
+
 import org.apache.calcite.linq4j.Ord;
 import org.apache.calcite.plan.RelOptCluster;
 import org.apache.calcite.plan.RelOptUtil;
@@ -899,6 +901,10 @@ public class RelFieldTrimmer implements ReflectiveVisitor {
     RexNode newMatchConditionExpr =
         matchConditionExpr != null ? matchConditionExpr.accept(shuttle) : null;
 
+    RexNode newPartitionBy = join.getPartitionBy() != null
+        ? join.getPartitionBy().accept(shuttle)
+        : null;
+
     relBuilder.push(newInputs.get(0));
     relBuilder.push(newInputs.get(1));
 
@@ -931,7 +937,7 @@ public class RelFieldTrimmer implements ReflectiveVisitor {
           requireNonNull(newMatchConditionExpr, "newMatchConditionExpr"));
       break;
     default:
-      relBuilder.join(join.getJoinType(), newConditionExpr);
+      relBuilder.join(join.getJoinType(), newConditionExpr, newPartitionBy, ImmutableSet.of());
       break;
     }
     return result(relBuilder.build(), mapping, join);

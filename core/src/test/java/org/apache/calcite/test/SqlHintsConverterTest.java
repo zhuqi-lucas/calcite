@@ -719,6 +719,7 @@ class SqlHintsConverterTest {
         left,
         right,
         info.getEquiCondition(left, right, cluster.getRexBuilder()),
+        join.getPartitionBy(),
         join.getVariablesSet(),
         join.getJoinType());
     }

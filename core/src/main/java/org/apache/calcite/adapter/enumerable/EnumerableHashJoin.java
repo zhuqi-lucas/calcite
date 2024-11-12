@@ -247,6 +247,10 @@ public class EnumerableHashJoin extends Join implements EnumerableRel {
     final PhysType keyPhysType =
         leftResult.physType.project(
             joinInfo.leftKeys, JavaRowFormat.LIST);
+
+    final PhysType partitionType =
+        rightResult.physType.project(
+            joinInfo.partitionKeys, JavaRowFormat.LIST);
     Expression predicate = Expressions.constant(null);
     if (!joinInfo.nonEquiConditions.isEmpty()) {
       RexNode nonEquiCondition =
@@ -259,6 +263,7 @@ public class EnumerableHashJoin extends Join implements EnumerableRel {
                 rightResult.physType, nonEquiCondition);
       }
     }
+
     return implementor.result(
         physType,
         builder.append(
@@ -269,6 +274,7 @@ public class EnumerableHashJoin extends Join implements EnumerableRel {
                     rightExpression,
                     leftResult.physType.generateAccessorWithoutNulls(joinInfo.leftKeys),
                     rightResult.physType.generateAccessorWithoutNulls(joinInfo.rightKeys),
+                    rightResult.physType.generateAccessorWithoutNulls(joinInfo.partitionKeys),
                     EnumUtils.joinSelector(joinType,
                         physType,
                         ImmutableList.of(

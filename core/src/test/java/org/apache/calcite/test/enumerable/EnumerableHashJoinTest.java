@@ -80,22 +80,22 @@ class EnumerableHashJoinTest {
   @Test void leftOuterParitionByJoin() {
     tester(false, new HrSchema())
         .query(
-            "select e.empid, e.name, d.name as dept from emps e  left outer "
+            "select e.deptno, e.empid, e.name, d.name as dept from emps e  left outer "
                 + "join depts d partition by (d.name) on e.deptno=d.deptno")
         .withHook(Hook.PLANNER, (Consumer<RelOptPlanner>) planner ->
             planner.removeRule(EnumerableRules.ENUMERABLE_MERGE_JOIN_RULE))
-        .explainContains("EnumerableCalc(expr#0..4=[{inputs}], empid=[$t0], "
+        .explainContains("EnumerableCalc(expr#0..4=[{inputs}], deptno=[$t1], empid=[$t0], "
             + "name=[$t2], dept=[$t4])\n"
-            + "  EnumerableHashJoin(condition=[=($1, $3)], joinType=[left])\n"
+            + "  EnumerableHashJoin(condition=[=($1, $3)], partitionBy=[$4], joinType=[left])\n"
             + "    EnumerableCalc(expr#0..4=[{inputs}], proj#0..2=[{exprs}])\n"
             + "      EnumerableTableScan(table=[[s, emps]])\n"
             + "    EnumerableCalc(expr#0..3=[{inputs}], proj#0..1=[{exprs}])\n"
             + "      EnumerableTableScan(table=[[s, depts]])\n")
         .returnsUnordered(
-            "empid=100; name=Bill; dept=Sales",
-            "empid=110; name=Theodore; dept=Sales",
-            "empid=150; name=Sebastian; dept=Sales",
-            "empid=200; name=Eric; dept=null");
+            "deptno=10; empid=100; name=Bill; dept=Sales",
+            "deptno=10; empid=110; name=Theodore; dept=Sales",
+            "deptno=10; empid=150; name=Sebastian; dept=Sales",
+            "deptno=20; empid=200; name=Eric; dept=null");
   }
 
   @Test void rightOuterJoin() {

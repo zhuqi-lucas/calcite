@@ -1485,6 +1485,43 @@ public abstract class EnumerableDefaults {
     }
   }
 
+  /**
+   * Correlates the elements of two sequences based on
+   * matching keys. A specified {@code EqualityComparer<TSource>} is used to
+   * compare keys.A predicate is used to filter the join result per-row.
+   */
+  public static <TSource, TInner, TKey, TResult> Enumerable<TResult> hashJoin(
+      Enumerable<TSource> outer, Enumerable<TInner> inner,
+      Function1<TSource, TKey> outerKeySelector,
+      Function1<TInner, TKey> innerKeySelector,
+      Function1<TInner, TKey> partitionKeySelector,
+      Function2<TSource, TInner, TResult> resultSelector,
+      @Nullable EqualityComparer<TKey> comparer, boolean generateNullsOnLeft,
+      boolean generateNullsOnRight,
+      @Nullable Predicate2<TSource, TInner> predicate) {
+    if (predicate == null) {
+      return hashEquiJoin_(
+          outer,
+          inner,
+          outerKeySelector,
+          innerKeySelector,
+          resultSelector,
+          comparer,
+          generateNullsOnLeft,
+          generateNullsOnRight);
+    } else {
+      return hashJoinWithPredicate_(
+          outer,
+          inner,
+          outerKeySelector,
+          innerKeySelector,
+          resultSelector,
+          comparer,
+          generateNullsOnLeft,
+          generateNullsOnRight, predicate);
+    }
+  }
+
   /** Implementation of join that builds the right input and probes with the
    * left. */
   private static <TSource, TInner, TKey, TResult> Enumerable<TResult> hashEquiJoin_(

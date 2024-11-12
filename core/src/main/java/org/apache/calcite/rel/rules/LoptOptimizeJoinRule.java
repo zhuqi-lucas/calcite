@@ -2060,7 +2060,7 @@ public class LoptOptimizeJoinRule
    */
   private static boolean areSelfJoinKeysUnique(RelMetadataQuery mq,
       RelNode leftRel, RelNode rightRel, RexNode joinFilters) {
-    final JoinInfo joinInfo = JoinInfo.of(leftRel, rightRel, joinFilters);
+    final JoinInfo joinInfo = JoinInfo.of(leftRel, rightRel, joinFilters, null);
 
     // Make sure each key on the left maps to the same simple column as the
     // corresponding key on the right

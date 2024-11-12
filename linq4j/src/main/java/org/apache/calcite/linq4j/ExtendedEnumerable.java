@@ -567,6 +567,15 @@ public interface ExtendedEnumerable<TSource> {
       Function2<TSource, TInner, TResult> resultSelector,
       EqualityComparer<TKey> comparer);
 
+  <TInner, TKey, TResult> Enumerable<TResult> hashJoin(
+      Enumerable<TInner> inner, Function1<TSource, TKey> outerKeySelector,
+      Function1<TInner, TKey> innerKeySelector,
+      Function1<TInner, TKey> partitionKeySelector,
+      Function2<TSource, TInner, TResult> resultSelector,
+      EqualityComparer<TKey> comparer,
+      boolean generateNullsOnLeft, boolean generateNullsOnRight,
+      @Nullable Predicate2<TSource, TInner> predicate);
+
   /**
    * Correlates elements of two sequences based on
    * - matching keys

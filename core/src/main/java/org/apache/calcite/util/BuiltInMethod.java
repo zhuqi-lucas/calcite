@@ -203,6 +203,7 @@ public enum BuiltInMethod {
       DataContext.class),
   HASH_JOIN(ExtendedEnumerable.class, "hashJoin", Enumerable.class,
       Function1.class,
+      Function1.class,
       Function1.class, Function2.class, EqualityComparer.class,
       boolean.class, boolean.class, Predicate2.class),
   ASOF_JOIN(ExtendedEnumerable.class, "asofJoin", Enumerable.class,

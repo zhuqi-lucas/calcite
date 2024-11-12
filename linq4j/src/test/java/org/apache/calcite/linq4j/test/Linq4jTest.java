@@ -1022,6 +1022,30 @@ public class Linq4jTest {
             + "Janet works in Sales]"));
   }
 
+  @Test void testLeftPartitionJoin() {
+    // Note #1: Left join means emit nulls on RHS but not LHS.
+    //   Employees with bad departments are not eliminated;
+    //   departments with no employees are eliminated.
+    // Note #2: Order of employees is preserved.
+    String s =
+        Linq4j.asEnumerable(emps)
+            .concat(Linq4j.asEnumerable(badEmps))
+            .hashJoin(
+                Linq4j.asEnumerable(depts),
+                EMP_DEPTNO_SELECTOR,
+                DEPT_DEPTNO_SELECTOR, (v1, v2) -> v1.name + " works in "
+                    + (v2 == null ? null : v2.name) + " department number " + v1.deptno , null, false, true)
+            .orderBy(Functions.identitySelector())
+            .toList()
+            .toString();
+    assertThat(
+        s, is("[Bill works in Marketing department number 30, "
+            + "Cedric works in null department number 40, "
+            + "Eric works in Sales department number 10, "
+            + "Fred works in Sales department number 10, "
+            + "Janet works in Sales department number 10]"));
+  }
+
   @Test void testRightJoin() {
     // Note #1: Left join means emit nulls on LHS but not RHS.
     //   Employees with bad departments are eliminated;

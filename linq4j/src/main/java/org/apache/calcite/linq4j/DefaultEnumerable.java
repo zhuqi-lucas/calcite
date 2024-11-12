@@ -429,6 +429,19 @@ public abstract class DefaultEnumerable<T> implements OrderedEnumerable<T> {
         generateNullsOnRight, predicate);
   }
 
+  @Override public <TInner, TKey, TResult> Enumerable<TResult> hashJoin(
+      Enumerable<TInner> inner, Function1<T, TKey> outerKeySelector,
+      Function1<TInner, TKey> innerKeySelector,
+      Function1<TInner, TKey> partitionKeySelector,
+      Function2<T, TInner, TResult> resultSelector,
+      EqualityComparer<TKey> comparer,
+      boolean generateNullsOnLeft, boolean generateNullsOnRight,
+      @Nullable Predicate2<T, TInner> predicate) {
+    return EnumerableDefaults.hashJoin(getThis(), inner, outerKeySelector,
+        innerKeySelector, partitionKeySelector, resultSelector, comparer, generateNullsOnLeft,
+        generateNullsOnRight, predicate);
+  }
+
   @Override public <TInner, TResult> Enumerable<TResult> correlateJoin(
       JoinType joinType, Function1<T, Enumerable<TInner>> inner,
       Function2<T, TInner, TResult> resultSelector) {

@@ -19,6 +19,7 @@ package org.apache.calcite.rel.core;
 import org.apache.calcite.plan.RelOptUtil;
 import org.apache.calcite.rel.RelNode;
 import org.apache.calcite.rex.RexBuilder;
+import org.apache.calcite.rex.RexInputRef;
 import org.apache.calcite.rex.RexNode;
 import org.apache.calcite.rex.RexUtil;
 import org.apache.calcite.runtime.FlatLists;
@@ -46,34 +47,52 @@ import static java.util.Objects.requireNonNull;
 public class JoinInfo {
   public final ImmutableIntList leftKeys;
   public final ImmutableIntList rightKeys;
+  // Now the partition keys only select from right input, because we only support left join for it now.
+  public final ImmutableIntList partitionKeys;
   public final ImmutableList<RexNode> nonEquiConditions;
 
   /** Creates a JoinInfo. */
   protected JoinInfo(ImmutableIntList leftKeys, ImmutableIntList rightKeys,
-      ImmutableList<RexNode> nonEquiConditions) {
+      ImmutableList<RexNode> nonEquiConditions, ImmutableIntList partitionKeys) {
     this.leftKeys = requireNonNull(leftKeys, "leftKeys");
     this.rightKeys = requireNonNull(rightKeys, "rightKeys");
+    this.partitionKeys = partitionKeys;
     this.nonEquiConditions =
         requireNonNull(nonEquiConditions, "nonEquiConditions");
     assert leftKeys.size() == rightKeys.size();
   }
 
   /** Creates a {@code JoinInfo} by analyzing a condition. */
-  public static JoinInfo of(RelNode left, RelNode right, RexNode condition) {
+  public static JoinInfo of(RelNode left, RelNode right, RexNode condition, RexNode partitionBy) {
     final List<Integer> leftKeys = new ArrayList<>();
     final List<Integer> rightKeys = new ArrayList<>();
+    final List<Integer> partitionKeys = new ArrayList<>();
     final List<Boolean> filterNulls = new ArrayList<>();
     final List<RexNode> nonEquiList = new ArrayList<>();
     RelOptUtil.splitJoinCondition(left, right, condition, leftKeys, rightKeys,
         filterNulls, nonEquiList);
+
+    assert partitionBy instanceof RexInputRef;
+    final int leftFileCount = left.getRowType().getFieldCount();
+
+    if (partitionBy instanceof RexInputRef) {
+      int partitionKey = ((RexInputRef) partitionBy).getIndex();
+      if (partitionKey < leftFileCount) {
+        partitionKeys.add(partitionKey);
+      } else {
+        // The partition key is from right input, we need to adjust the index.
+        partitionKeys.add(partitionKey - leftFileCount);
+      }
+    }
+
     return new JoinInfo(ImmutableIntList.copyOf(leftKeys),
-        ImmutableIntList.copyOf(rightKeys), ImmutableList.copyOf(nonEquiList));
+        ImmutableIntList.copyOf(rightKeys), ImmutableList.copyOf(nonEquiList), ImmutableIntList.copyOf(partitionKeys));
   }
 
   /** Creates an equi-join. */
   public static JoinInfo of(ImmutableIntList leftKeys,
-      ImmutableIntList rightKeys) {
-    return new JoinInfo(leftKeys, rightKeys, ImmutableList.of());
+      ImmutableIntList rightKeys, ImmutableIntList partitionKeys) {
+    return new JoinInfo(leftKeys, rightKeys, ImmutableList.of(), partitionKeys);
   }
 
   /** Returns whether this is an equi-join. */
